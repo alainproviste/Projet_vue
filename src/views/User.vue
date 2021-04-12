@@ -3,18 +3,24 @@
         <TitlePage title="Mon compte"/>
         <div>
             <div class="user__info" v-if="user">
-                <p>Nom :{{user.firstName}}</p>
-                <p>Prénom :{{user.lastName}}</p>
-                <p>Email :{{user.email}}</p>
-                <button @click="logout">Se déconnecter</button>
+                <router-link :to="{name:'WischList'}">Mes produits favoris</router-link>
+                <p>Nom : {{user.lastName}}</p>
+                <p>Prénom : {{user.firstName}}</p>
+                <p>Email : {{user.email}}</p>
+                <p>Numéro de téléphone : {{user.phone}}</p>
+                <p>Pays : {{user.address.country}}</p>
+                <p>Ville : {{user.address.city}}</p>
+                <p>Code postal : {{user.address.zip}}</p>
+                <p>Rue : {{user.address.street}}</p>
+                <p><button @click="logout">Se déconnecter</button></p><router-link :to="{name:'UpdateUser'}">Modifier profil</router-link>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import VueJwtDecode from "vue-jwt-decode";
 import TitlePage from "../components/TitlePage";
+import ApiUsers from '../mixins/ApiUsers';
     export default {
         components: {
             TitlePage
@@ -24,27 +30,30 @@ import TitlePage from "../components/TitlePage";
                 user:{}
             }
         },
+        mixins:[ApiUsers],
         methods: {
             logout: function() {
                 localStorage.removeItem('token');
+                localStorage.removeItem('wichList');
+                document.location.reload();
+            },
+            updateProfil() {
+                this.updateUser()
+                .then((data) => {
+                    this.user = data.user;
+                    document.location.reload();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
             }
         },
         created() {
-            const token = localStorage.getItem('token');
-            if(token) {
-               const decodedToken = VueJwtDecode.decode(token);
-               fetch(`https://ynovnodejs.herokuapp.com/api/v1/users/${decodedToken.id}`, {
-                   headers: {
-                       Authorization: token
-                   }
-               })
-               .then(res => res.json())
-               .then(data=>{
-                   this.user = data;
-                   console.log(this.user.email);
-               })
-               .catch(err => console.log(err))
-            }
+            this.getUser()
+            .then(data=>{
+                this.user = data;
+            })
+            .catch(err => console.log(err))
         }
     }
 </script>

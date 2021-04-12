@@ -1,7 +1,12 @@
 <template>
   <div class="page__shop">
-    <TitlePage title="Mon Eshop"/>
-    <ProductsGrid :productsArray="productsArray"/>
+    <TitlePage title="Green fight world"/>
+    <div class="search__form">
+      <p> Recherche ton produit : <input type="text" v-model="searchValue"></p>
+    </div>
+    <div>
+      <ProductsGrid :productsArray="filteredShop"/>
+    </div>
   </div>
 </template>
 
@@ -9,6 +14,7 @@
 import TitlePage from "../components/TitlePage";
 import ProductsGrid from "../components/ProductsGrid";
 import ApiProducts from '../mixins/ApiProducts';
+import apiConfigs from "../configs/api.configs";
 
 export default {
     components: {
@@ -17,17 +23,22 @@ export default {
     },
     data: function() {
       return {
-       productsArray:[]
+       productsArray:[],
+       searchValue:""
       }
     },
-    methods: {
+    computed: {
+      filteredShop: function(){
+        let filter = new RegExp(this.searchValue, "i");
+
+        return this.productsArray.filter(item=> item.title.match(filter));
+      }
     },
     mixins:[ApiProducts],
     created() {
-      fetch("https://ynovnodejs.herokuapp.com/api/v1/products")
+      fetch(`${apiConfigs.apiUrl}/products`)
       .then(res => res.json())
       .then(data => {
-        console.log(data,"data");
         this.productsArray = data;
         }
       )

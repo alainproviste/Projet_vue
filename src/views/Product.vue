@@ -1,41 +1,41 @@
 <template>
   <div class="page__product">
+    <TitlePage title="Fiche produit"/>
     <div class="product__content" v-if="ProductCard">
-      <TitlePage :title="ProductCard.title"/>
-      <p>{{ProductCard.price | formatPrice }}</p>
+      <ProductCard :productObject="ProductCard"/>
     </div>
   </div>
 </template>
 
 <script>
+import apiConfigs from "../configs/api.configs";
 import TitlePage from "../components/TitlePage";
+import ProductCard from "../components/ProductCard";
+import ApiProducts from "../mixins/ApiProducts";
 
 export default {
     components: {
-        TitlePage,
+        ProductCard,
+        TitlePage
     },
+    mixins: [ApiProducts],
     data: function() {
       return {
        ProductCard:{}
       }
     },
-    filters: {
-
-    },
     methods: {
-        getProduct: function() {
-            return fetch("https://nodejs-myapi.herokuapp.com/api/v1/product/" + this.$route.params.id)
-            .then(res => res.json())
+        get_product: function() {
+            this.getProduct()
             .then(data => {
-                console.log(data,"data");
                 this.ProductCard = data;
-                }
+              }
             )
             .catch(err => console.log(err))
         }
     },
     created() {
-      this.getProduct();
+      this.get_product();
     }
 }
 </script>

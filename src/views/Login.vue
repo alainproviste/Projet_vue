@@ -1,17 +1,11 @@
 <template>
-    <div class="login__form">
+    <div class="container_connexion">
+        <TitlePage title="Connexion"/>
         <form @submit.prevent="login">
-            <div class="form__group">
-                <label htmlFor="email">Mail</label>
-                <input type="email" name="email" v-model="email"/>
-            </div>
-            <div class="form__group">
-                <label htmlFor="password">Password</label>
-                <input type="password" name="password" v-model="password"/>
-            </div>
-            <div class="form__group">
-               <input type="submit" value="se connecter">
-            </div>
+            <input class="input" type="email" name="email" placeholder="EMAIL" v-model="email"/>
+            <input class="input" type="password" name="password" placeholder="MOT DE PASSE" v-model="password"/>
+            <input class="button" type="submit" value="se connecter">
+            <p><router-link :to="{name:'Register'}">Créer un compte</router-link></p>
         </form>
         <p v-if="messageError">
             {{messageError}}
@@ -20,7 +14,12 @@
 </template>
 
 <script>
+    import apiConfigs from "../configs/api.configs";
+    import TitlePage from "../components/TitlePage";
     export default {
+        components: {
+            TitlePage
+        },
         data: function() {
             return {
                 email:"",
@@ -42,7 +41,7 @@
                    },
                    body : JSON.stringify(body)
                 }
-                fetch("https://ynovnodejs.herokuapp.com/api/v1/login",requestOptions)
+                fetch(`${apiConfigs.apiUrl}/login`,requestOptions)
                 .then (res => res.json())
                 .then((data) => {
                         if(!data.auth) {
@@ -52,6 +51,7 @@
                             let token = data.token;
                             localStorage.setItem('token',token);
                             this.$router.push('/account');
+                            this.$router.go();
                         }
                     }
                 )
@@ -63,5 +63,39 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+
+.container_connexion{
+    width: 40%;
+    margin: auto;
+    margin-top:10%;
+}
+
+.input {
+    padding: 1.8vh 2.2vh;
+    margin: 0.5vh;
+    width: 85%;
+    border:2px solid;
+    font-size: 100%;
+    margin-bottom: 2vh;
+}
+
+
+.button {
+    background-color: #F07E31;
+    color: white;
+    padding: 1vw 1.5vw;
+    margin: 8px 0;
+    border: 1px solid #F07E31;
+    width: 50%;
+    align-items: center;
+    font-size: 20px;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: white;
+    color: #F07E31;
+    transition: all 0.3s linear;
+}
+
 </style> 

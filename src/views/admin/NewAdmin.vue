@@ -1,6 +1,7 @@
 <template>
     <div class="register__form">
-        <TitlePage title="Création d'un compte"/>
+        <NavAdmin />
+        <TitlePage title="Création d'un compte admin"/>
         <form @submit.prevent="register">
             <input type="text" class="input" name="firstName" placeholder="Prénom" v-model="firstName"/>
             <input type="text" class="input" name="lastName" placeholder="Nom" v-model="lastName"/><br>
@@ -21,12 +22,14 @@
 </template>
 
 <script>
-    import apiConfigs from "../configs/api.configs";
-    import TitlePage from "../components/TitlePage";
+    import apiConfigs from "../../configs/api.configs";
+    import TitlePage from "../../components/TitlePage";
+    import NavAdmin from "../../layout/NavAdmin"
 
     export default {
         components: {
-            TitlePage
+            TitlePage,
+            NavAdmin
         },
         data: function() {
             return {
@@ -49,7 +52,7 @@
                         phone : this.phone,
                         email : this.email,
                         password: this.password,
-                        isAdmin : false,
+                        isAdmin : true,
                         address : {
                             zip : this.address.zip,
                             street : this.address.street,
@@ -73,7 +76,7 @@
                             console.log(data.error);
                             this.messageError = "Un problème est survenu lors de la création de votre compte ! Veuillez réesayer.";
                         } else {
-                            this.$router.push('/login');
+                            this.$router.push('/admin/users');
                         }
                     })
                     .catch(
@@ -88,7 +91,6 @@
 </script>
 
 <style scoped>
-
 .input {
     width: 13%;
     border-color: black;
@@ -128,4 +130,4 @@
     border-color: #F07E31;
     border-style: solid;
 }
-</style> 
+</style>
